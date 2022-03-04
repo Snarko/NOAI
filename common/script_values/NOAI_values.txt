@@ -1,0 +1,109 @@
+﻿# Base value for being placed on the council (no position specified)
+# Does NOT check if the character can actually hold the a position.
+NOAI_base_councillor_value = {
+	# Set a base value
+	value = 100
+	# Prioritize vassals. Especially powerful vassals.
+	if = {
+		limit = { is_powerful_vassal_of = scope:council_owner }
+		add = 80
+	}
+	else_if = {
+		limit = { is_vassal_of = scope:council_owner }
+		add = 30
+	}
+	# Prioritize vassals already on the council
+	if = {
+		limit = { 
+			is_councillor_of = scope:council_owner
+			is_vassal_of = scope:council_owner
+		}
+		add = 30
+	}
+	# Prioritize those who like you
+	if = {
+		limit = { scope:NOAI_opinion_of_liege > 30 }
+		add = 20
+	}
+	# Reduce the priority a lot if they really don't like us.
+	else_if = {
+		limit = { scope:NOAI_opinion_of_liege < -60 }
+		add = -50
+	}
+	# It's ok if powerful vassals are a little unhappy. It might be because they're not on the council.
+	# If they already are on the council upsetting them more might not be a good idea.
+	else_if = {
+		limit = { 
+			scope:NOAI_opinion_of_liege < -30
+			NOT = { is_powerful_vassal_of = scope:council_owner }
+		}
+		add = -20
+	}
+	
+	if = {
+		limit = {
+			scope:council_owner.culture = { has_cultural_parameter = close_family_better_councillors }
+			is_close_family_of = scope:council_owner
+		}
+		add = 10
+	}
+}
+
+NOAI_chancellor_value = {
+	add = NOAI_chancellor_base_value
+	add = NOAI_base_councillor_value
+}
+
+NOAI_chancellor_base_value = {
+	value = diplomacy
+	multiply = 5
+}
+
+NOAI_steward_value = {
+	add = NOAI_steward_base_value
+	add = NOAI_base_councillor_value
+}
+
+NOAI_steward_base_value = {
+	value = stewardship
+	multiply = 5
+}
+
+NOAI_marshal_value = {
+	add = NOAI_marshal_base_value
+	add = NOAI_base_councillor_value
+}
+
+NOAI_marshal_base_value = {
+	value = martial
+	multiply = 5
+}
+
+NOAI_spymaster_value = {
+	add = NOAI_spymaster_base_value
+	add = NOAI_base_councillor_value
+}
+
+NOAI_spymaster_base_value = {
+	value = intrigue
+	multiply = 5
+	# Don't hire a spymaster who hate you!
+	if = {
+		limit = { scope:NOAI_opinion_of_liege < 0 }
+		add = scope:NOAI_opinion_of_liege
+	}
+	#else_if = {
+	#	limit = { scope:NOAI_opinion_of_liege < -10 }
+	#	add = -20
+	#}
+}
+
+NOAI_court_chaplain_value = {
+	add = NOAI_court_chaplain_base_value
+	add = NOAI_base_councillor_value
+}
+
+NOAI_court_chaplain_base_value = {
+	value = learning
+	multiply = 5
+}

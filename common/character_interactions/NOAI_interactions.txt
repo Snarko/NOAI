@@ -1,0 +1,309 @@
+﻿# The original version. Now only for the player, to prevent the original AI from picking positions.
+invite_to_council_position_interaction = {
+	category = interaction_category_vassal
+	popup_on_receive = yes
+	pause_on_receive = yes
+
+	hidden = yes
+
+	special_interaction = invite_to_council_interaction
+	notification_text = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					scope:recipient = {
+						is_councillor_of = scope:actor
+					}
+				}
+				desc = liege_offer_council_position_exchange
+			}
+			triggered_desc = {
+				trigger = {
+					scope:actor = {
+						opinion = {
+							value >= 30
+							target = scope:recipient
+						}
+					}
+				}
+				desc = liege_offer_council_position_liked
+			}
+			triggered_desc = {
+				trigger = {
+					scope:actor = {
+						opinion = {
+							value <= -30
+							target = scope:recipient
+						}
+					}
+				}
+				desc = liege_offer_council_position_disliked
+			}
+			triggered_desc = {
+				trigger = {
+					scope:recipient = {
+						is_powerful_vassal_of = scope:actor
+					}
+				}
+				desc = liege_offer_council_position_powerful
+			}
+			triggered_desc = {
+				trigger = {
+					scope:recipient = {
+						OR = {
+							diplomacy > high_skill_rating
+							martial > high_skill_rating
+							stewardship > high_skill_rating
+							intrigue > high_skill_rating
+							learning > high_skill_rating
+						}
+					}
+				}
+				desc = liege_offer_council_position_skilled
+			}
+			desc = liege_offer_council_position_fallback
+		}
+	}
+	
+	is_valid_showing_failures_only = {
+		# NOAI: prevents the AI from using this. Should block the default AI from assigning councillors.
+		scope:actor = { is_ai = no }
+		trigger_if = {
+			limit = { exists = scope:target }
+			ALL_FALSE = {
+				scope:recipient.council_task = scope:target
+				scope:actor = { is_at_war_with = scope:recipient }
+			}
+		}
+		trigger_if = {
+			limit = {
+				exists = scope:target.councillor
+			}
+			scope:target = { can_fire_position = yes }
+			NOT = {
+				scope:target.councillor = {
+					is_blocked_from_being_fired_from_council_trigger = { COURT_OWNER = scope:actor }
+				}
+			}
+		}
+	}
+
+	on_accept = {
+		# Assign the councillor to their new responsibilities.
+		scope:actor = {
+			assign_council_task = {
+				target = scope:recipient
+				council_task = scope:target
+			}
+		}
+		#debug_log = "STANDARD AI COUNCIL ACTION"
+		#debug_log_scopes = yes
+
+		# If the new councillor is a player, inform their liege that they have accepted the offer.
+		if = {
+			limit = {
+				scope:recipient = {
+					is_ai = no
+				}
+			}
+			scope:actor = {
+				trigger_event = {
+					id = council_interaction.0001
+					days = 1
+				}
+			}
+		}
+	}
+
+	on_decline = {
+		# If the requested councillor is a player, inform their liege that they have declined the offer.
+		if = {
+			limit = {
+				scope:recipient = {
+					is_ai = no
+				}
+			}
+			scope:actor = {
+				trigger_event = {
+					id = council_interaction.0002
+					days = 1
+				}			
+			}
+		}
+	}
+
+	auto_accept = {
+		custom_description = {
+			text = auto_accept_interaction_ai	
+			object = scope:recipient
+			scope:recipient = {
+				is_ai = yes
+			}
+		}
+	}
+}
+
+# The AI only version
+NOAI_invite_to_council_position_interaction = {
+	category = interaction_category_vassal
+	popup_on_receive = yes
+	pause_on_receive = yes
+
+	hidden = yes
+
+	#special_interaction = invite_to_council_interaction
+	notification_text = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					scope:recipient = {
+						is_councillor_of = scope:actor
+					}
+				}
+				desc = NOAI_liege_offer_council_position_exchange
+			}
+			triggered_desc = {
+				trigger = {
+					scope:actor = {
+						opinion = {
+							value >= 30
+							target = scope:recipient
+						}
+					}
+				}
+				desc = NOAI_liege_offer_council_position_liked
+			}
+			triggered_desc = {
+				trigger = {
+					scope:actor = {
+						opinion = {
+							value <= -30
+							target = scope:recipient
+						}
+					}
+				}
+				desc = NOAI_liege_offer_council_position_disliked
+			}
+			triggered_desc = {
+				trigger = {
+					scope:recipient = {
+						is_powerful_vassal_of = scope:actor
+					}
+				}
+				desc = NOAI_liege_offer_council_position_powerful
+			}
+			triggered_desc = {
+				trigger = {
+					scope:recipient = {
+						OR = {
+							diplomacy > high_skill_rating
+							martial > high_skill_rating
+							stewardship > high_skill_rating
+							intrigue > high_skill_rating
+							learning > high_skill_rating
+						}
+					}
+				}
+				desc = NOAI_liege_offer_council_position_skilled
+			}
+			desc = NOAI_liege_offer_council_position_fallback
+		}
+	}
+	
+	is_valid_showing_failures_only = {
+		# AI only version of the vanilla interaction.
+		#scope:actor = { is_ai = no }
+		trigger_if = {
+			limit = { exists = scope:recipient.var:NOAI_council_task }
+			ALL_FALSE = {
+				scope:recipient.council_task = scope:recipient.var:NOAI_council_task
+				scope:actor = { is_at_war_with = scope:recipient }
+			}
+		}
+		trigger_if = {
+			limit = {
+				exists = scope:recipient.var:NOAI_council_task.councillor
+			}
+			scope:recipient.var:NOAI_council_task = { can_fire_position = yes }
+			NOT = {
+				scope:recipient.var:NOAI_council_task.councillor = {
+					is_blocked_from_being_fired_from_council_trigger = { COURT_OWNER = scope:actor }
+				}
+			}
+		}
+	}
+
+	on_accept = {
+		# Assign the councillor to their new responsibilities.
+		scope:actor = {
+			assign_council_task = {
+				target = scope:recipient
+				council_task = scope:recipient.var:NOAI_council_task
+			}
+		}
+		#debug_log = "NOAI COUNCIL ACTION"
+		#debug_log_scopes = yes
+
+		# If the new councillor is a player, inform their liege that they have accepted the offer.
+		if = {
+			limit = {
+				scope:recipient = {
+					is_ai = no
+				}
+			}
+			scope:actor = {
+				trigger_event = {
+					id = council_interaction.0001
+					days = 1
+				}
+			}
+		}
+	}
+
+	on_decline = {
+		# If the requested councillor is a player, inform their liege that they have declined the offer.
+		if = {
+			limit = {
+				scope:recipient = {
+					is_ai = no
+				}
+			}
+			scope:actor = {
+				trigger_event = {
+					id = council_interaction.0002
+					days = 1
+				}			
+			}
+		}
+		if = {
+			limit = {
+				scope:actor = {
+					is_ai = yes
+				}
+			}
+			scope:recipient = {
+				add_character_flag = {
+					flag = NOAI_recently_declined_council_position
+					years = 5
+				}
+			}
+			scope:actor = {
+				trigger_event = {
+					days = 1
+					id = NOAI_event.0010
+				}
+			}
+		}
+	}
+
+	auto_accept = {
+		custom_description = {
+			text = auto_accept_interaction_ai	
+			object = scope:recipient
+			scope:recipient = {
+				is_ai = yes
+			}
+		}
+	}
+}
+

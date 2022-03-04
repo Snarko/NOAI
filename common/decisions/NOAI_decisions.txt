@@ -1,0 +1,29 @@
+﻿# Debug test decision
+NOAI_rearrange_council_decision = {
+	picture = "gfx/interface/illustrations/decisions/decision_major_religion.dds"
+
+	is_shown = {
+		debug_only = yes
+	}
+	is_valid_showing_failures_only = {
+		is_available_adult_or_is_commanding = yes
+	}
+	effect = {
+		debug_log = "REARRANGE COUNCIL SPEED TEST START"
+		debug_log_scopes = no
+		#while = {
+		#	count = 50
+			every_ruler = {
+				limit = {
+					is_landed = yes
+					highest_held_title_tier >= tier_county
+				}
+				NOAI_rearrange_council = yes
+			}
+		#}
+		debug_log = "REARRANGE COUNCIL SPEED TEST END"
+		debug_log_scopes = no
+	}
+
+	ai_check_interval = 0
+}

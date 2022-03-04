@@ -1,0 +1,267 @@
+﻿# NOAI code for filling the council.
+NOAI_rearrange_council = {
+	#debug_log_scopes = no
+	# To prevent this from firing repeatedly. For example when gaining multiple titles.
+	# There's no check for the variable here. Check before you call this!
+	set_variable = {
+		name = NOAI_council_recently_rearranged
+		value = yes
+		days = 3
+	}
+	save_scope_as = council_owner
+	# Which council positions can we replace?
+	NOAI_can_replace_councillor = { COUNCILLOR = chancellor }
+	NOAI_can_replace_councillor = { COUNCILLOR = steward }
+	NOAI_can_replace_councillor = { COUNCILLOR = marshal }
+	NOAI_can_replace_councillor = { COUNCILLOR = spymaster }
+	NOAI_can_replace_councillor = { COUNCILLOR = court_chaplain }
+	every_vassal = {
+		limit = {
+			NOAI_can_be_councillor_trigger = yes
+		}
+		NOAI_set_all_council_position_scores = yes
+	}
+	every_courtier = {
+		limit = {
+			NOAI_can_be_councillor_trigger = yes
+		}
+		NOAI_set_all_council_position_scores = yes
+	}
+	# Save the top choice for each role.
+	ordered_in_list = {
+		list = NOAI_chancellor_list
+		order_by = var:NOAI_chancellor
+
+		save_scope_as = NOAI_chancellor_target
+	}
+	ordered_in_list = {
+		list = NOAI_steward_list
+		limit = { 
+			trigger_if = { limit = { exists = scope:NOAI_chancellor_target } NOT = { this = scope:NOAI_chancellor_target } }
+		}
+		order_by = var:NOAI_steward
+
+		save_scope_as = NOAI_steward_target
+	}
+	ordered_in_list = {
+		list = NOAI_marshal_list
+		limit = {
+			trigger_if = { limit = { exists = scope:NOAI_chancellor_target } NOT = { this = scope:NOAI_chancellor_target } }
+			trigger_if = { limit = { exists = scope:NOAI_steward_target } NOT = { this = scope:NOAI_steward_target } }
+		}
+		order_by = var:NOAI_marshal
+
+		save_scope_as = NOAI_marshal_target
+	}
+	ordered_in_list = {
+		list = NOAI_spymaster_list
+		limit = { 
+			trigger_if = { limit = { exists = scope:NOAI_chancellor_target } NOT = { this = scope:NOAI_chancellor_target } }
+			trigger_if = { limit = { exists = scope:NOAI_steward_target } NOT = { this = scope:NOAI_steward_target } }
+			trigger_if = { limit = { exists = scope:NOAI_marshal_target } NOT = { this = scope:NOAI_marshal_target } }
+		}
+		order_by = var:NOAI_spymaster
+
+		save_scope_as = NOAI_spymaster_target
+	}
+	ordered_in_list = {
+		list = NOAI_court_chaplain_list
+		limit = { 
+			trigger_if = { limit = { exists = scope:NOAI_chancellor_target } NOT = { this = scope:NOAI_chancellor_target } }
+			trigger_if = { limit = { exists = scope:NOAI_steward_target } NOT = { this = scope:NOAI_steward_target } }
+			trigger_if = { limit = { exists = scope:NOAI_marshal_target } NOT = { this = scope:NOAI_marshal_target } }
+			trigger_if = { limit = { exists = scope:NOAI_spymaster_target } NOT = { this = scope:NOAI_spymaster_target } }
+		}
+		order_by = var:NOAI_court_chaplain
+
+		save_scope_as = NOAI_court_chaplain_target
+	}
+
+	#debug_log_scopes = yes
+	NOAI_reorder_all_councillors = yes
+
+	NOAI_appoint_councillor = { COUNCILLOR = chancellor }
+	NOAI_appoint_councillor = { COUNCILLOR = steward }
+	NOAI_appoint_councillor = { COUNCILLOR = marshal }
+	NOAI_appoint_councillor = { COUNCILLOR = spymaster }
+	NOAI_appoint_councillor = { COUNCILLOR = court_chaplain }
+	#debug_log_scopes = yes
+
+	every_in_list = { 
+		list = NOAI_chancellor_list
+		remove_from_list = NOAI_chancellor_list
+	}
+	every_in_list = { 
+		list = NOAI_steward_list
+		remove_from_list = NOAI_steward_list
+	}
+	every_in_list = { 
+		list = NOAI_marshal_list
+		remove_from_list = NOAI_marshal_list
+	}
+	every_in_list = { 
+		list = NOAI_spymaster_list
+		remove_from_list = NOAI_spymaster_list
+	}
+	every_in_list = { 
+		list = NOAI_court_chaplain_list
+		remove_from_list = NOAI_court_chaplain_list
+	}
+
+	clear_saved_scope = NOAI_chancellor_target
+	clear_saved_scope = NOAI_steward_target
+	clear_saved_scope = NOAI_marshal_target
+	clear_saved_scope = NOAI_spymaster_target
+	clear_saved_scope = NOAI_court_chaplain_target
+	clear_saved_scope = NOAI_temp_councillor
+
+	remove_character_flag = NOAI_can_replace_chancellor
+	remove_character_flag = NOAI_can_replace_steward
+	remove_character_flag = NOAI_can_replace_marshal
+	remove_character_flag = NOAI_can_replace_spymaster
+	remove_character_flag = NOAI_can_replace_court_chaplain
+}
+
+# Call this when a council slot becomes empty.
+# For now this rearrange the whole council if it's a position we can assign
+# If speed is an issue it can be reduced to just the position that's vacated and then checking if we should swap with the existing councillors.
+NOAI_assign_position = {
+	if = {
+		limit = {
+			NOAI_$COUNCILLOR$_can_assign = yes
+		}
+		#debug_log = "NOAI FREE COUNCIL POSITION"
+		NOAI_rearrange_council = yes
+	}
+}
+
+NOAI_reorder_councillor = {
+	if = {
+		limit = { 
+			AND = {
+				exists = scope:NOAI_$COUNCILLOR1$_target
+				exists = scope:NOAI_$COUNCILLOR2$_target
+				scope:NOAI_$COUNCILLOR1$_target.NOAI_$COUNCILLOR2$_base_value  >= scope:NOAI_$COUNCILLOR2$_target.NOAI_$COUNCILLOR2$_base_value
+				scope:NOAI_$COUNCILLOR2$_target.NOAI_$COUNCILLOR1$_base_value >= scope:NOAI_$COUNCILLOR1$_target.NOAI_$COUNCILLOR1$_base_value
+				scope:NOAI_$COUNCILLOR1$_target = { can_be_$COUNCILLOR2$_trigger = { COURT_OWNER = scope:council_owner } }
+				scope:NOAI_$COUNCILLOR2$_target = { can_be_$COUNCILLOR1$_trigger = { COURT_OWNER = scope:council_owner } }
+			}
+		}
+		scope:NOAI_$COUNCILLOR1$_target = { save_scope_as = NOAI_temp_councillor }
+		scope:NOAI_$COUNCILLOR2$_target = { save_scope_as = NOAI_$COUNCILLOR1$_target }
+		scope:NOAI_temp_councillor = { save_scope_as = NOAI_$COUNCILLOR2$_target }
+	}
+	else_if = {
+		limit = {
+			AND = {
+				exists = scope:NOAI_$COUNCILLOR1$_target
+				NOT = { exists = scope:NOAI_$COUNCILLOR2$_target }
+				has_character_flag = NOAI_can_replace_$COUNCILLOR2$
+				NOT = { exists = cp:councillor_$COUNCILLOR2$ }
+				scope:NOAI_$COUNCILLOR1$_target.NOAI_$COUNCILLOR2$_base_value  > scope:NOAI_$COUNCILLOR1$_target.NOAI_$COUNCILLOR1$_base_value
+				scope:NOAI_$COUNCILLOR1$_target = { can_be_$COUNCILLOR2$_trigger = { COURT_OWNER = scope:council_owner } }
+			}
+		}
+		scope:NOAI_$COUNCILLOR1$_target = { save_scope_as = NOAI_$COUNCILLOR2$_target }
+		clear_saved_scope = NOAI_$COUNCILLOR1$_target
+	}
+}
+
+# Try to reorder the councillor positions to maximize skills
+NOAI_reorder_all_councillors = {
+	NOAI_reorder_councillor = { COUNCILLOR1 = chancellor COUNCILLOR2 = steward }
+	NOAI_reorder_councillor = { COUNCILLOR1 = chancellor COUNCILLOR2 = marshal }
+	NOAI_reorder_councillor = { COUNCILLOR1 = chancellor COUNCILLOR2 = spymaster }
+	NOAI_reorder_councillor = { COUNCILLOR1 = chancellor COUNCILLOR2 = court_chaplain }
+	NOAI_reorder_councillor = { COUNCILLOR1 = steward COUNCILLOR2 = marshal }
+	NOAI_reorder_councillor = { COUNCILLOR1 = steward COUNCILLOR2 = spymaster }
+	NOAI_reorder_councillor = { COUNCILLOR1 = steward COUNCILLOR2 = court_chaplain }
+	NOAI_reorder_councillor = { COUNCILLOR1 = marshal COUNCILLOR2 = spymaster }
+	NOAI_reorder_councillor = { COUNCILLOR1 = marshal COUNCILLOR2 = court_chaplain }
+	NOAI_reorder_councillor = { COUNCILLOR1 = spymaster COUNCILLOR2 = court_chaplain }
+}
+
+NOAI_can_replace_councillor = {
+	if = {
+		limit = {
+			OR = {
+				NOT = { exists = cp:councillor_$COUNCILLOR$ }
+				cp:councillor_$COUNCILLOR$ = {
+					NOT = { is_blocked_from_being_fired_from_council_trigger = { COURT_OWNER = scope:council_owner } }
+				}
+			}
+			#NOAI_$COUNCILLOR$_can_assign = yes
+		}
+		add_character_flag = {
+			flag = NOAI_can_replace_$COUNCILLOR$
+		}
+	}
+}
+
+# Always set the base value before running this!
+NOAI_set_council_position_score = {
+	if = {
+		limit = {
+			scope:council_owner = { has_character_flag = NOAI_can_replace_$COUNCILLOR$ }
+			can_be_$COUNCILLOR$_trigger = { COURT_OWNER = scope:council_owner }
+			has_variable = NOAI_council_base_value
+		}
+		set_variable = {
+			name = NOAI_$COUNCILLOR$
+			value = NOAI_$COUNCILLOR$_base_value
+		}
+		change_variable = {
+			name = NOAI_$COUNCILLOR$
+			add = var:NOAI_council_base_value
+		}
+		if = {
+			limit = { var:NOAI_$COUNCILLOR$ > 0 }
+			add_to_list = NOAI_$COUNCILLOR$_list
+		}
+	}
+}
+
+NOAI_set_all_council_position_scores = {
+	save_opinion_value_as = { name = NOAI_opinion_of_liege target = scope:council_owner }
+	set_variable = {
+		name = NOAI_council_base_value
+		value = NOAI_base_councillor_value
+	}
+	NOAI_set_council_position_score = { COUNCILLOR = chancellor }
+	NOAI_set_council_position_score = { COUNCILLOR = steward }
+	NOAI_set_council_position_score = { COUNCILLOR = marshal }
+	NOAI_set_council_position_score = { COUNCILLOR = spymaster }
+	NOAI_set_council_position_score = { COUNCILLOR = court_chaplain }
+}
+
+NOAI_appoint_councillor = {
+	if = { 
+		limit = { 
+			has_character_flag = NOAI_can_replace_$COUNCILLOR$
+			exists = scope:NOAI_$COUNCILLOR$_target
+			NOT = { scope:NOAI_$COUNCILLOR$_target = { has_council_position = councillor_$COUNCILLOR$ } }
+			#NAND = {
+			#	exists = cp:councillor_$COUNCILLOR$
+			#	cp:councillor_$COUNCILLOR$ = scope:NOAI_$COUNCILLOR$_target
+			#}
+		}
+		# We need to save the position on the reciever
+		# Otherwise if the reciever is a human we might overwrite the variable before they reply
+		scope:NOAI_$COUNCILLOR$_target = {
+			set_variable = {
+				name = NOAI_council_task
+				value = scope:council_owner.council_task:councillor_$COUNCILLOR$
+			}
+		}
+		run_interaction = {
+			interaction = NOAI_invite_to_council_position_interaction
+			actor = this
+			recipient = scope:NOAI_$COUNCILLOR$_target
+			send_threshold = decline
+		}
+	}
+}
+
+
+# Empty effect. For testing new effects without having to restart the game.
+NOAI_debug_effect = {}

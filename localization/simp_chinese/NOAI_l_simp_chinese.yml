@@ -1,0 +1,7 @@
+﻿l_simp_chinese:
+ NOAI_liege_offer_council_position_exchange:1 "\n我已决定，必须重组我的内阁。你将作为我的[recipient.MakeScope.Var('NOAI_council_task').CouncilTask.GetPositionName]为我效力，立即生效。\n"
+ NOAI_liege_offer_council_position_liked:1 "\n你一直是一名忠心耿耿的臣民，我希望奖赏你的功劳。\n\n因此，我特此提供你[actor.GetPrimaryTitle.GetNameNoTierNoTooltip]的[recipient.MakeScope.Var('NOAI_council_task').CouncilTask.GetPositionName]的职位。\n"
+ NOAI_liege_offer_council_position_powerful:1 "\n你作为一位有影响力的[recipient.GetTitleAsNameNoTooltip]，能在我的内阁中发言才是公平的。\n\n有鉴于此，我特此提供你[actor.GetPrimaryTitle.GetNameNoTierNoTooltip]的[recipient.MakeScope.Var('NOAI_council_task').CouncilTask.GetPositionName]的职位。\n"
+ NOAI_liege_offer_council_position_disliked:1 "\n我得出了这个残酷的结论，你确实是我出缺的内阁职位最好的候选者。\n\n虽然这样做使我痛苦，我还是得遗憾地提供给你[actor.GetPrimaryTitle.GetNameNoTierNoTooltip]的[recipient.MakeScope.Var('NOAI_council_task').CouncilTask.GetPositionName]的职位。\n"
+ NOAI_liege_offer_council_position_skilled:1 "\n[recipient.GetFirstNameNoTooltip]，你无边的才能不会被忽视。\n\n因认可你的能力，我愿意提供你[actor.GetPrimaryTitle.GetNameNoTierNoTooltip]的[recipient.MakeScope.Var('NOAI_council_task').CouncilTask.GetPositionName]的职位。\n"
+ NOAI_liege_offer_council_position_fallback:1 "\n命运在对你微笑，[recipient.GetFirstNameNoTooltip]，因为我发现我需要一个新的[recipient.MakeScope.Var('NOAI_council_task').CouncilTask.GetPositionName]，而你是我拥有的唯一候选人。\n\n我相信你会接受这份工作的吧？\n"

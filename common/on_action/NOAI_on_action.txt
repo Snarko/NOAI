@@ -1,0 +1,187 @@
+﻿on_game_start = {
+    on_actions = {
+        on_NOAI_start
+    }
+}
+
+yearly_playable_pulse = {
+	on_actions = {
+        on_NOAI_yearly_pulse
+    }
+}
+
+on_leave_council = {
+	on_actions = {
+		on_NOAI_free_council_position
+	}
+}
+
+# Don't add on_fired_from_council here. It was probably NOAI which fired the character.
+
+on_councillor_left = {
+	on_actions = {
+		on_NOAI_free_council_position
+	}
+}
+
+on_death = {
+	on_actions = {
+		on_NOAI_death
+	}
+}
+
+on_title_destroyed = {
+	on_actions = {
+		on_NOAI_title_management
+	}
+}
+
+on_title_gain = {
+	on_actions = {
+		on_NOAI_title_management
+		on_NOAI_title_management_previous_holder
+	}
+}
+
+# No need to call on_NOAI_title_management_previous_holder here
+on_title_gain_inheritance = {
+	on_actions = {
+		on_NOAI_title_management
+	}
+}
+
+on_title_gain_usurpation = {
+	on_actions = {
+		on_NOAI_title_management
+		on_NOAI_title_management_previous_holder
+	}
+}
+
+on_title_lost = {
+	on_actions = {
+		on_NOAI_title_management
+	}
+}
+
+on_vassal_gained = {
+	on_actions = {
+		on_NOAI_title_management
+		on_NOAI_title_management_old_liege
+	}
+}
+
+# on_rank_up and on_rank_down is hopefully caught by the above on_actions. Can be added here if not.
+
+on_NOAI_start = {
+	effect = {
+		set_global_variable = {
+			name = NOAI_is_loaded
+			value = yes
+		}
+    }
+}
+
+# If the yearly pulse triggers and a council slot is not filled then something went wrong
+# It's supposed to fill them as they get vacated but there may be somewhere that's missing
+# Unless you simply don't have anyone valid... in which case we should check if someone has shown up
+on_NOAI_yearly_pulse = {
+	effect = {
+		if = {
+			limit = { 
+				is_ai = yes
+				is_landed = yes
+				highest_held_title_tier >= tier_county
+				has_free_council_slot = yes
+				NOT = { has_variable = NOAI_council_recently_rearranged }
+			}
+			#debug_log = "NOAI YEARLY PULSE REARRANGEMENT"
+			NOAI_rearrange_council = yes
+		}
+	}
+}
+
+on_NOAI_death = {
+	events = {
+		NOAI_event.0001
+	}
+}
+
+on_NOAI_title_management = {
+	events = {
+		# One day delay to make sure everything get set up properly
+		delay = { days = 1 }
+		NOAI_event.0010
+	}
+}
+
+on_NOAI_title_management_previous_holder = {
+	effect = {
+		if = {
+			limit = { exists = scope:previous_holder }
+			scope:previous_holder = { 
+				trigger_event = {
+					id = NOAI_event.0011
+					days = 1
+				}
+			}
+		}
+	}
+}
+
+on_NOAI_title_management_old_liege = {
+	effect = {
+		if = {
+			limit = { exists = scope:old_liege }
+			scope:old_liege = { 
+				trigger_event = {
+					id = NOAI_event.0011
+					days = 1
+				}
+			}
+		}
+	}
+}
+
+# A way to streamline / generalize this would be nice.
+# We could go directly to rearrange_council but it should be faster to first test if we CAN assign the position
+on_NOAI_free_council_position = {
+	effect = {
+		if = {
+			limit = { 
+				is_ai = yes
+				is_landed = yes
+				highest_held_title_tier >= tier_county
+				# We might have tried recently but don't have anyone suitable
+				#NOT = { has_variable = NOAI_council_recently_rearranged }
+			}
+			# Don't ask them immediately if they just left the position.
+			# TODO: longer delay for asking again if a human (voluntarily) leave their position.
+			scope:councillor = {
+				add_character_flag = {
+					flag = NOAI_recently_declined_council_position
+					days = 1
+				}
+			}
+			if = {
+				limit = { scope:councillor = { has_council_position = councillor_chancellor } }
+				NOAI_assign_position = { COUNCILLOR = chancellor }
+			}
+			else_if = {
+				limit = { scope:councillor = { has_council_position = councillor_steward } }
+				NOAI_assign_position = { COUNCILLOR = steward }
+			}
+			else_if = {
+				limit = { scope:councillor = { has_council_position = councillor_marshal } }
+				NOAI_assign_position = { COUNCILLOR = marshal }
+			}
+			else_if = {
+				limit = { scope:councillor = { has_council_position = councillor_spymaster } }
+				NOAI_assign_position = { COUNCILLOR = spymaster }
+			}
+			else_if = {
+				limit = { scope:councillor = { has_council_position = councillor_court_chaplain } }
+				NOAI_assign_position = { COUNCILLOR = court_chaplain }
+			}
+		}
+	}
+}

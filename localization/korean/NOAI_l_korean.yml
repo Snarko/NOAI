@@ -1,0 +1,7 @@
+﻿l_korean:
+ NOAI_liege_offer_council_position_exchange:1 "\n내 자문회를 재편성할 필요가 있다고 결론을 내렸소. 그대는 즉시 [recipient.MakeScope.Var('NOAI_council_task').CouncilTask.GetPositionName](으)로서 나를 섬기도록 하시오.\n"
+ NOAI_liege_offer_council_position_liked:1 "\n그대는 충성스럽게 헌신적으로 봉사해왔으므로 그 보답을 하고 싶소.\n\n이를 인정하여 그대에게 [actor.GetPrimaryTitle.GetNameNoTierNoTooltip]의 [recipient.MakeScope.Var('NOAI_council_task').CouncilTask.GetPositionName] 자리를 제안하는 바이오.\n"
+ NOAI_liege_offer_council_position_powerful:1 "\n그대는 영향력 있는 [recipient.GetTitleAsNameNoTooltip]이니 내 자문회에서 발언권을 가지는 것이 공정하겠지.\n\n이러한 사실을 고려하여, 그대에게 [actor.GetPrimaryTitle.GetNameNoTierNoTooltip]의 [recipient.MakeScope.Var('NOAI_council_task').CouncilTask.GetPositionName] 자리를 제안하는 바이오.\n"
+ NOAI_liege_offer_council_position_disliked:1 "\n내 자문회의 공석에 그대가 최선의 후보자가 될 것이라는 명백한 결론에 도달했소.\n\n비록 괴로운 일이지만, 불행히도 당신에게 [actor.GetPrimaryTitle.GetNameNoTierNoTooltip]의 [recipient.MakeScope.Var('NOAI_council_task').CouncilTask.GetPositionName] 자리를 제안해야 할 것 같구려.\n"
+ NOAI_liege_offer_council_position_skilled:1 "\n그대의 상당한 재능이 눈에 띄지 않으려야 않을 수가 없소, [recipient.GetFirstNameNoTooltip].\n\n그 능력을 인정하여, 그대에게[actor.GetPrimaryTitle.GetNameNoTierNoTooltip]의 [recipient.MakeScope.Var('NOAI_council_task').CouncilTask.GetPositionName] 자리를 제안하고 싶소.\n"
+ NOAI_liege_offer_council_position_fallback:1 "\n행운이 [recipient.GetFirstNameNoTooltip], 그대에게 미소를 짓는군. 나는 새로운 [recipient.MakeScope.Var('NOAI_council_task').CouncilTask.GetPositionName](이)가 필요하며 유일한 후보자는 바로 그대요.\n\n그 일을 맡아줄 거라고 믿어도 되겠소?\n"

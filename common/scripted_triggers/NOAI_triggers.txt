@@ -1,0 +1,43 @@
+﻿NOAI_can_be_councillor_trigger = {
+	can_be_councillor_basics_trigger = yes
+	# Death is not instant. Make sure we don't accidentally pick up people about to die / that just died.
+	NOR = {
+		has_character_flag = about_to_die_but_not_dead_yet_flag
+		is_alive = no
+	}
+	trigger_if = {
+		limit = { 
+			is_councillor_of = scope:council_owner
+		}
+		OR = {
+			# Spouse makes this.council_task error in is_blocked_from_being_fired_from_council_trigger
+			has_council_position = councillor_spouse
+			can_be_fired_from_council_trigger = { COURT_OWNER = scope:council_owner }
+		}
+	}
+	# Never put your rivals on the council
+	# Technically this check if the person is rival/nemesis with council_owner, not what council_owner thinks.
+	# Which is fine. You shouldn't appoint someone to the council if they hate you.
+	NOR = {
+		has_relation_rival = scope:council_owner 
+		has_relation_nemesis = scope:council_owner
+	}
+	NOT = { has_character_flag = NOAI_recently_declined_council_position }
+}
+
+# Please help me find a way to un-hardcode this
+# The game does not appear to have a trigger or effect for can_reassign
+NOAI_court_chaplain_can_assign = {
+	faith = {
+		has_doctrine_parameter = clerical_appointment_ruler
+	}
+}
+
+# These roles don't use can_reassign so they can be empty
+NOAI_chancellor_can_assign = {}
+NOAI_steward_can_assign = {}
+NOAI_marshal_can_assign = {}
+NOAI_spymaster_can_assign = {}
+
+# Empty trigger. For testing new triggers without having to restart the game.
+NOAI_debug_trigger = {}

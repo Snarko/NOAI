@@ -1,0 +1,95 @@
+﻿namespace = NOAI_event
+
+### Appoint new councillor when the old one die ###
+# TODO make this check for position
+# Can't just set a flag
+# We need a one day delay to ensure the character is indeed dead before we assign someone new
+# More councillors could die in that time
+NOAI_event.0001 = {
+    type = character_event
+
+	hidden = yes
+
+    trigger = {
+        exists = liege
+        liege = { is_ai = yes }
+        NOT = { this = liege }
+    }
+
+	immediate = {
+		if = {
+            limit = { is_councillor = yes }
+            liege = {
+                trigger_event = {
+                    id = NOAI_event.0002
+                    days = 1
+                }
+            }
+        }
+    }
+}
+
+# TODO make this use NOAI_assign_position
+### Appoint new councillor when the old one die, liege version ###
+NOAI_event.0002 = {
+    type = character_event
+
+	hidden = yes
+    trigger = {
+        is_ai = yes
+        is_landed = yes
+        is_alive = yes
+		NOT = { has_character_flag = about_to_die_but_not_dead_yet_flag }
+		highest_held_title_tier >= tier_county
+		NOT = { has_variable = NOAI_council_recently_rearranged }
+    }
+    immediate = {
+        #debug_log = "NOAI DEATH REARRANGEMENT"
+        NOAI_rearrange_council = yes
+    }
+}
+
+### Set up council ###
+# Called in places (like on_actions) that want a delay before the rearrangement happens.
+# Kept seperate from the 0002 event for debugging / counting purposes
+NOAI_event.0010 = {
+    type = character_event
+
+    hidden = yes
+
+    trigger = {
+        is_ai = yes
+        is_landed = yes
+        is_alive = yes
+		NOT = { has_character_flag = about_to_die_but_not_dead_yet_flag }
+		highest_held_title_tier >= tier_county
+		NOT = { has_variable = NOAI_council_recently_rearranged }
+    }
+    immediate = {
+        #debug_log = "NOAI TITLE CHANGE REARRANGEMENT"
+        NOAI_rearrange_council = yes
+    }
+}
+
+### Event for the old liege (if one exist) when titles change hands, vassals are granted and so on ###
+# Called in on_actions IF the old liege now have an empty council position
+# Only rearrange the council if a spot is now empty
+NOAI_event.0011 = {
+    type = character_event
+
+    hidden = yes
+
+    trigger = {
+        is_ai = yes
+        is_landed = yes
+        is_alive = yes
+		NOT = { has_character_flag = about_to_die_but_not_dead_yet_flag }
+		highest_held_title_tier >= tier_county
+		NOT = { has_variable = NOAI_council_recently_rearranged }
+        has_free_council_slot = yes
+    }
+    immediate = {
+        #debug_log = "NOAI TITLE CHANGE REARRANGEMENT OLD LIEGE / PREVIOUS HOLDER"
+        NOAI_rearrange_council = yes
+    }
+}
