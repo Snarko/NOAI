@@ -190,7 +190,7 @@ NOAI_can_replace_councillor = {
 					NOT = { is_blocked_from_being_fired_from_council_trigger = { COURT_OWNER = scope:council_owner } }
 				}
 			}
-			#NOAI_$COUNCILLOR$_can_assign = yes
+			NOAI_$COUNCILLOR$_can_assign = yes
 		}
 		add_character_flag = {
 			flag = NOAI_can_replace_$COUNCILLOR$

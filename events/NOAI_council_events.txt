@@ -1,11 +1,11 @@
-﻿namespace = NOAI_event
+﻿namespace = NOAI_council_event
 
 ### Appoint new councillor when the old one die ###
 # TODO make this check for position
 # Can't just set a flag
 # We need a one day delay to ensure the character is indeed dead before we assign someone new
 # More councillors could die in that time
-NOAI_event.0001 = {
+NOAI_council_event.0001 = {
     type = character_event
 
 	hidden = yes
@@ -21,7 +21,7 @@ NOAI_event.0001 = {
             limit = { is_councillor = yes }
             liege = {
                 trigger_event = {
-                    id = NOAI_event.0002
+                    id = NOAI_council_event.0002
                     days = 1
                 }
             }
@@ -31,7 +31,7 @@ NOAI_event.0001 = {
 
 # TODO make this use NOAI_assign_position
 ### Appoint new councillor when the old one die, liege version ###
-NOAI_event.0002 = {
+NOAI_council_event.0002 = {
     type = character_event
 
 	hidden = yes
@@ -52,7 +52,7 @@ NOAI_event.0002 = {
 ### Set up council ###
 # Called in places (like on_actions) that want a delay before the rearrangement happens.
 # Kept seperate from the 0002 event for debugging / counting purposes
-NOAI_event.0010 = {
+NOAI_council_event.0010 = {
     type = character_event
 
     hidden = yes
@@ -74,7 +74,7 @@ NOAI_event.0010 = {
 ### Event for the old liege (if one exist) when titles change hands, vassals are granted and so on ###
 # Called in on_actions IF the old liege now have an empty council position
 # Only rearrange the council if a spot is now empty
-NOAI_event.0011 = {
+NOAI_council_event.0011 = {
     type = character_event
 
     hidden = yes

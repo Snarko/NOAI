@@ -102,7 +102,7 @@ on_NOAI_yearly_pulse = {
 
 on_NOAI_death = {
 	events = {
-		NOAI_event.0001
+		NOAI_council_event.0001
 	}
 }
 
@@ -110,7 +110,7 @@ on_NOAI_title_management = {
 	events = {
 		# One day delay to make sure everything get set up properly
 		delay = { days = 1 }
-		NOAI_event.0010
+		NOAI_council_event.0010
 	}
 }
 
@@ -120,7 +120,7 @@ on_NOAI_title_management_previous_holder = {
 			limit = { exists = scope:previous_holder }
 			scope:previous_holder = { 
 				trigger_event = {
-					id = NOAI_event.0011
+					id = NOAI_council_event.0011
 					days = 1
 				}
 			}
@@ -134,7 +134,7 @@ on_NOAI_title_management_old_liege = {
 			limit = { exists = scope:old_liege }
 			scope:old_liege = { 
 				trigger_event = {
-					id = NOAI_event.0011
+					id = NOAI_council_event.0011
 					days = 1
 				}
 			}

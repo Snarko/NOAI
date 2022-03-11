@@ -212,7 +212,7 @@ NOAI_invite_to_council_position_interaction = {
 	
 	is_valid_showing_failures_only = {
 		# AI only version of the vanilla interaction.
-		#scope:actor = { is_ai = no }
+		#scope:actor = { is_ai = yes }
 		trigger_if = {
 			limit = { exists = scope:recipient.var:NOAI_council_task }
 			ALL_FALSE = {
@@ -290,7 +290,7 @@ NOAI_invite_to_council_position_interaction = {
 			scope:actor = {
 				trigger_event = {
 					days = 1
-					id = NOAI_event.0010
+					id = NOAI_council_event.0010
 				}
 			}
 		}

@@ -1,0 +1,2 @@
+﻿# NOAI: number of years that the AI should not create a claimant faction for someone who recently lost the title
+NOAI_claimant_war_lost_cooldown = 5

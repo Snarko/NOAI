@@ -107,3 +107,6 @@ NOAI_court_chaplain_base_value = {
 	value = learning
 	multiply = 5
 }
+
+# Empty value. For testing new values without having to restart the game.
+NOAI_debug_value = {}

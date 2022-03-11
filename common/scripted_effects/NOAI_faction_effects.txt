@@ -1,0 +1,94 @@
+﻿# NOAI: set a flag to stop the AI from starting a claimant faction for someone recently deposed
+NOAI_set_recently_deposed_flag = {
+	debug_log_scopes = yes
+	$DEFENDER$ = {
+		add_character_flag = {
+			flag = NOAI_recently_deposed
+			years = NOAI_claimant_war_lost_cooldown
+		}
+	}
+}
+
+# Make AI dynasty members, friends and the like join you defensively. Sometimes.
+NOAI_on_declared_claimant_war = {
+    if = {
+		limit = {
+			exists = $WAR$
+			NOT = { exists = global_var:LTAF_is_loaded }
+		}
+		$DEFENDER$ = { 
+            set_variable = {
+                name = NOAI_claimant_war_scope
+                value = $WAR$
+				days = 1
+            }
+            every_vassal = {
+                limit = {
+                    is_a_faction_member = no
+                    is_at_war = no
+                    gold > 0
+                    NOT = { this = $CLAIMANT$ }
+                    OR = {
+                        AND = {
+                            has_dynasty = yes
+                            dynasty = $DEFENDER$.dynasty
+                            NOT = { dynasty = $CLAIMANT$.dynasty }
+                        }
+                        has_relation_best_friend = $DEFENDER$
+                        has_relation_friend = $DEFENDER$
+                        is_councillor_of = $DEFENDER$
+                    }
+                }
+                random_list = {
+                    # Join the war
+                    100 = {
+                        modifier = { 
+                            factor = 2
+                            is_primary_heir_of = $DEFENDER$
+                        }
+                        modifier = { 
+                            factor = 1.5
+                            has_relation_best_friend = $DEFENDER$
+                        }
+                        modifier = { 
+                            factor = 1.2
+                            has_relation_friend = $DEFENDER$
+                        }
+                        modifier = { 
+                            factor = 1.2
+                            has_dynasty = yes
+                            dynasty = $DEFENDER$.dynasty
+                            NOT = { dynasty = $ATTACKER$.dynasty }
+                        }
+                        opinion_modifier = {
+                            who = this
+                            opinion_target = $DEFENDER$
+                            multiplier = 1
+                        }
+                        ai_value_modifier = { 
+                            ai_honor = 1
+                        }
+                        run_interaction = {
+                            interaction = NOAI_join_war_interaction
+                            actor = this
+                            recipient = $DEFENDER$
+                            send_threshold = decline
+                        }
+                    }
+                    # Don't join the war
+                    200 = {
+                        modifier = {
+                            factor = 2
+                            gold < ai_war_chest_desired_gold_value
+                        }
+                        opinion_modifier = {
+                            who = this
+                            opinion_target = $ATTACKER$
+                            multiplier = 1
+                        }
+                    }
+                }
+            }
+         }
+	}
+}

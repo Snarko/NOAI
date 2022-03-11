@@ -1,0 +1,37 @@
+﻿on_war_started = {
+    on_actions = {
+        NOAI_on_war_started
+    }
+}
+
+on_war_won_attacker = {
+    on_actions = {
+        NOAI_on_war_won_attacker
+    }
+}
+
+NOAI_on_war_started = {
+    trigger = {
+		scope:war = {
+			using_cb = claimant_faction_war
+		}
+	}
+    effect = { 
+        NOAI_on_declared_claimant_war = { ATTACKER = scope:attacker DEFENDER = scope:defender WAR = scope:war CLAIMANT = scope:attacker.joined_faction.special_character }
+    }
+}
+
+NOAI_on_war_won_attacker = {
+    trigger = {
+		scope:war = {
+			OR = {
+				using_cb = claimant_faction_war
+				using_cb = depose_war
+			}
+		}
+	}
+    effect = {
+        NOAI_set_recently_deposed_flag = { DEFENDER = scope:defender }
+    }
+}
+
